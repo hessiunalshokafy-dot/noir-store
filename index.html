@@ -1,0 +1,387 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NOIR STORE</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #fff;
+  color: #111;
+}
+
+header {
+  background: #111;
+  color: white;
+  text-align: center;
+  padding: 22px;
+}
+
+header h1 {
+  letter-spacing: 5px;
+  margin: 0;
+}
+
+header p {
+  color: #bbb;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 5;
+}
+
+nav a {
+  text-decoration: none;
+  color: #111;
+  font-size: 13px;
+}
+
+.hero {
+  background: #171717;
+  color: white;
+  text-align: center;
+  padding: 55px 15px;
+}
+
+.hero h2 { font-size: 29px; }
+
+.hero button, .main-btn {
+  background: #111;
+  color: white;
+  border: none;
+  padding: 13px 20px;
+  cursor: pointer;
+}
+
+.hero button {
+  background: white;
+  color: black;
+}
+
+.section {
+  padding: 25px 15px;
+}
+
+.section h2 {
+  text-align: center;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+}
+
+.product {
+  border: 1px solid #eee;
+  padding-bottom: 12px;
+}
+
+.product img {
+  width: 100%;
+  height: 155px;
+  object-fit: cover;
+  background: #eee;
+}
+
+.product h3, .product p {
+  padding: 0 9px;
+  font-size: 14px;
+}
+
+.product button {
+  display: block;
+  width: calc(100% - 18px);
+  margin: 7px 9px;
+  padding: 10px;
+  background: #111;
+  color: white;
+  border: 0;
+  cursor: pointer;
+}
+
+.details, .checkout {
+  display: none;
+  padding: 20px 15px;
+  border-top: 1px solid #ddd;
+}
+
+.details img {
+  width: 100%;
+  max-height: 270px;
+  object-fit: contain;
+  background: #f4f4f4;
+}
+
+.cart {
+  background: #f5f5f5;
+  margin: 15px;
+  padding: 20px;
+}
+
+.cart button, .details button {
+  padding: 8px 12px;
+  border: 0;
+  cursor: pointer;
+}
+
+form {
+  display: grid;
+  gap: 12px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+footer {
+  background: #111;
+  color: white;
+  padding: 25px;
+  text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>NOIR</h1>
+  <p>THE ART OF ELEGANCE</p>
+</header>
+
+<nav>
+  <a href="#">الرئيسية</a>
+  <a href="#products">المنتجات</a>
+  <a href="#cart">السلة 🛒</a>
+</nav>
+
+<section class="hero">
+  <h2>اكتشف الأناقة</h2>
+  <p>اختيارات مميزة. أسلوب مختلف.</p>
+  <button onclick="document.getElementById('products').scrollIntoView()">
+    تسوق الآن
+  </button>
+</section>
+
+<section class="section" id="products">
+  <h2>منتجاتنا</h2>
+  <div class="products" id="productList"></div>
+</section>
+
+<section class="details" id="details">
+  <button onclick="closeDetails()">رجوع</button>
+  <div id="detailContent"></div>
+</section>
+
+<section class="cart" id="cart">
+  <h2>سلة المشتريات</h2>
+  <div id="cartItems">السلة فارغة</div>
+  <p>الإجمالي: <b id="total">0</b> جنيه</p>
+  <button class="main-btn" onclick="showCheckout()">
+    إتمام الطلب
+  </button>
+</section>
+
+<section class="checkout" id="checkout">
+  <h2>بيانات العميل</h2>
+  <form id="orderForm">
+    <input name="name" placeholder="الاسم بالكامل" required>
+    <input name="phone" type="tel"
+      placeholder="رقم الهاتف" required>
+    <textarea name="address"
+      placeholder="العنوان بالتفصيل" required></textarea>
+    <button class="main-btn" type="submit">
+      تأكيد الطلب
+    </button>
+  </form>
+  <p id="message"></p>
+</section>
+
+<footer>
+  <h2>NOIR STORE</h2>
+  <p>جميع الحقوق محفوظة © 2026</p>
+</footer>
+
+<script>
+const products = [
+  {
+    id: 1,
+    name: "منتج تجريبي 1",
+    price: 350,
+    description: "وصف تجريبي للمنتج الأول.",
+    image: "https://placehold.co/400x400/eeeeee/111111?text=Product+1"
+  },
+  {
+    id: 2,
+    name: "منتج تجريبي 2",
+    price: 450,
+    description: "وصف تجريبي للمنتج الثاني.",
+    image: "https://placehold.co/400x400/eeeeee/111111?text=Product+2"
+  },
+  {
+    id: 3,
+    name: "منتج تجريبي 3",
+    price: 250,
+    description: "وصف تجريبي للمنتج الثالث.",
+    image: "https://placehold.co/400x400/eeeeee/111111?text=Product+3"
+  },
+  {
+    id: 4,
+    name: "منتج تجريبي 4",
+    price: 550,
+    description: "وصف تجريبي للمنتج الرابع.",
+    image: "https://placehold.co/400x400/eeeeee/111111?text=Product+4"
+  }
+];
+
+let cart = [];
+
+function renderProducts() {
+  document.getElementById("productList").innerHTML =
+    products.map(p => `
+      <div class="product">
+        <img src="${p.image}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <p>${p.price} جنيه</p>
+        <button onclick="showDetails(${p.id})">
+          تفاصيل المنتج
+        </button>
+        <button onclick="addToCart(${p.id})">
+          أضف للسلة
+        </button>
+      </div>
+    `).join("");
+}
+
+function showDetails(id) {
+  const p = products.find(x => x.id === id);
+
+  document.getElementById("detailContent").innerHTML = `
+    <img src="${p.image}" alt="${p.name}">
+    <h2>${p.name}</h2>
+    <h3>${p.price} جنيه</h3>
+    <p>${p.description}</p>
+    <button class="main-btn"
+      onclick="addToCart(${p.id})">
+      أضف إلى السلة
+    </button>
+  `;
+
+  document.getElementById("details").style.display = "block";
+  document.getElementById("details").scrollIntoView();
+}
+
+function closeDetails() {
+  document.getElementById("details").style.display = "none";
+}
+
+function addToCart(id) {
+  const p = products.find(x => x.id === id);
+  cart.push(p);
+  updateCart();
+  alert("تمت إضافة المنتج للسلة");
+}
+
+function removeItem(index) {
+  cart.splice(index, 1);
+  updateCart();
+}
+
+function updateCart() {
+  const container = document.getElementById("cartItems");
+
+  container.innerHTML = cart.length
+    ? cart.map((p, i) => `
+      <p>${p.name} - ${p.price} جنيه
+      <button onclick="removeItem(${i})">حذف</button></p>
+    `).join("")
+    : "السلة فارغة";
+
+  document.getElementById("total").textContent =
+    cart.reduce((sum, p) => sum + p.price, 0);
+}
+
+function showCheckout() {
+  if (!cart.length) {
+    alert("أضف منتجًا للسلة أولاً");
+    return;
+  }
+
+  const checkout = document.getElementById("checkout");
+  checkout.style.display = "block";
+  checkout.scrollIntoView();
+}
+
+document.getElementById("orderForm").addEventListener(
+  "submit", function(e) {
+    e.preventDefault();
+
+    if (!cart.length) return;
+
+    const form = new FormData(this);
+
+    const order = {
+      customer: {
+        name: form.get("name"),
+        phone: form.get("phone"),
+        address: form.get("address")
+      },
+      products: cart.map(p => ({
+        id: p.id,
+        name: p.name,
+        price: p.price
+      })),
+      total: cart.reduce((sum, p) => sum + p.price, 0),
+      date: new Date().toISOString()
+    };
+
+    try {
+      const orders = JSON.parse(
+        localStorage.getItem("noirOrders") || "[]"
+      );
+
+      orders.push(order);
+
+      localStorage.setItem(
+        "noirOrders", JSON.stringify(orders)
+      );
+
+      document.getElementById("message").textContent =
+        "تم حفظ الطلب التجريبي بنجاح!";
+
+      cart = [];
+      updateCart();
+      this.reset();
+    } catch (error) {
+      document.getElementById("message").textContent =
+        "تعذر حفظ الطلب على هذا الجهاز.";
+    }
+  }
+);
+
+renderProducts();
+updateCart();
+</script>
+
+</body>
+</html>
